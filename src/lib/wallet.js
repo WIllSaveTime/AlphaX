@@ -6,7 +6,7 @@ import { CHAINDATA } from './constants'
 import { showToast, hideModal } from './utils'
 import { chainId, signer, provider, address } from './stores'
 
-let _provider = new ethers.providers.JsonRpcProvider('https://polygontestapi.terminet.io/rpc');
+let _provider = new ethers.providers.JsonRpcProvider('https://polygon-mumbai.g.alchemy.com/v2/c2ykx4FpFOf7XmucMdCOPQ3YvGe2ogbk');
 provider.set(_provider);
 chainId.set(80001);
 let _walletConnect;
@@ -118,6 +118,7 @@ export async function switchChains() {
 			params: [{ chainId: '0x13881' }],
 		});
 	} catch (switchError) {
+		console.log('error', switchError.message)
 		// This error code indicates that the chain has not been added to MetaMask.
 		if (switchError.code === 4902) {
 			try {
@@ -136,6 +137,7 @@ export async function switchChains() {
 					}],
 				});
 			} catch (addError) {
+				console.log('error', addError.message)
 				// handle "add" error
 			}
 		}

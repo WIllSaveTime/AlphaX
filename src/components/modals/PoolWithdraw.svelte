@@ -2,9 +2,9 @@
 
 	import { onMount } from 'svelte'
 
-	import { formatToDisplay, formatCurrency } from '../../lib/utils'
+	import { formatToDisplay, formatCurrency, hideModal } from '../../lib/utils'
 	
-	import { withdraw, withdrawCAP } from '../../lib/methods'
+	import { withdraw, withdrawapx } from '../../lib/methods'
 	
 	import Modal from './Modal.svelte'
 	import DataList from '../layout/DataList.svelte'
@@ -25,8 +25,8 @@
 	async function _submit() {
 		submitIsPending = true;
 		let error;
-		if (data.currencyLabel == 'cap') {
-			error = await withdrawCAP(
+		if (data.currencyLabel == 'apx') {
+			error = await withdrawapx(
 				amount
 			);
 		} else {
@@ -65,9 +65,19 @@
 		font-size: 85%;
 		text-align: center;
 	}
+	.closeDiv{
+		height: 10px;
+	}
+	.close{
+		color: black;
+		float: right;
+		padding-right: 10px;
+		cursor: pointer;
+	}
 </style>
 
 <Modal>
+	<div class="closeDiv"><span on:click={hideModal} class="close">x</span></div>
 	<DataList data={rows} bind:value={amount} onSubmit={_submit} />
 	{#if data.withdrawFee}
 		<div class='info'>{data.withdrawFee}% is retained and awarded to the rest of the pool.</div>

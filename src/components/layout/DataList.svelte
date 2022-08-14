@@ -48,7 +48,7 @@
 	}
 
 	input:hover, input:focus {
-		border-color: var(--green);
+		border-color: var(--btn-color);
 	}
 
 	input {
@@ -83,7 +83,7 @@
 	}
 
 	.clickable {
-		color: var(--green);
+		color: var(--btn-color);
 		cursor: pointer;
 	}
 

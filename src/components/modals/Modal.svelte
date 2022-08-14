@@ -59,10 +59,10 @@
 
 	.done-button {
 		cursor: pointer;
-		color: var(--green);
+		color: var(--btn-color);
 	}
 	.done-button:hover {
-		color: var(--green-dim);
+		color: var(--btn-color);
 	}
 
 	.modal-body {

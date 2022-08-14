@@ -28,7 +28,7 @@ const ERROR_STRINGS = {
 	'!empty': "The pool is empty.",
 	'!utilization': "Pool utilization ratio is too high. Please try again later or with a smaller position size.",
 	'!available-balance': "Not enough non-utilized balance is available in the pool. Please try again later or with a smaller amount.",
-	'!max-cap': "Maximum pool cap has been reached.",
+	'!max-apx': "Maximum pool apx has been reached.",
 	'!clp-amount': "Minted amount is too low.",
 	'gas': "Insufficient funds or gas. Deposit more funds into your wallet or try adjusting the gas limit.",
 	'nonce': 'Invalid transaction nonce. Try resetting your Metamask account.',
@@ -50,6 +50,6 @@ export function parseErrorToString(e) {
 	for (const key in ERROR_STRINGS) {
 		if (error_string.includes(key)) return ERROR_STRINGS[key];
 	}
-	console.error(e);
+	// console.error(e);
 	return DEFAULT_ERROR;
 }

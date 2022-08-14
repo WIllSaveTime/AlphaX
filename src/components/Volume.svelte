@@ -1,10 +1,10 @@
 <script>
 	
 	import { onMount, onDestroy } from 'svelte'
-	import { getVolume } from '../lib/graph'
+	import { getVolume, getTotalPosition } from '../lib/graph'
 	import { formatToDisplay } from '../lib/utils'
 	import { SPINNER_ICON } from '../lib/icons'
-	import { prices } from '../lib/stores'
+	import { prices, volume_ETH, volume_USDC, totalPositionETHMargin, totalPositionUSDCMargin } from '../lib/stores'
 
 	let v;
 	let volumeETH;
@@ -12,13 +12,20 @@
 
 	onMount(async () => {
 		const res = await getVolume();
-		// console.log('res', res);
+		await getTotalPosition()
+		
 		volumeETH = res.volumeETH;
 		volumeUSD = res.volumeUSD;
+
+		volume_ETH.set(res.volumeETH)
+		volume_USDC.set(res.volumeUSD)
 		v = setInterval(async () => {
+			await getTotalPosition();
 			const res = await getVolume();
 			volumeETH = res.volumeETH;
 			volumeUSD = res.volumeUSD;
+			volume_ETH.set(volumeETH)
+			volume_USDC.set(volumeUSD)
 		}, 60*1000);
 	});
 	

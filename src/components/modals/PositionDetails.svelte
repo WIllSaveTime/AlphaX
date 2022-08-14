@@ -16,6 +16,7 @@
 
 	onMount(async () => {
 		const lp = await calculateLiquidationPrice(data);
+		console.log('liquidation', lp)
 		liquidationPrice = lp && lp.toFixed(6);
 	});
 
@@ -74,10 +75,10 @@
 				isPnl: true,
 				rawValue: upl * 1
 			},
-			{
-				label: 'Interest',
-				value: interest ? `${formatToDisplay(interest)}  ${formatCurrency(data.currencyLabel)}` : '0'
-			},
+			// {
+			// 	label: 'Interest',
+			// 	value: interest ? `${formatToDisplay(interest)}  ${formatCurrency(data.currencyLabel)}` : '0'
+			// },
 			{
 				label: 'Liquidation Price',
 				value: formatToDisplay(liquidationPrice),
@@ -97,6 +98,7 @@
 		background-color: var(--jet);
 	}
 	.status a {
+		color: red;
 	}
 </style>
 

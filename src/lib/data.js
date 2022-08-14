@@ -1,6 +1,6 @@
 import { get } from 'svelte/store'
 
-import { selectProduct, selectCurrency, getPoolInfo, getCapPoolInfo } from './methods'
+import { selectProduct, selectCurrency, getPoolInfo, getapxPoolInfo } from './methods'
 import { getUserOrders, getUserPositions, getPoolStats } from './graph'
  
 import { currentPage } from './stores'
@@ -17,12 +17,14 @@ export function hydrateData() {
 		selectCurrency();
 		getUserOrders();
 		getUserPositions();
+		getPoolInfo('weth');
+		getPoolInfo('usdc');
 	} else if (_currentPage == 'pool') {
 		getPoolInfo('weth');
 		getPoolInfo('usdc');
 		getPoolStats('weth');
 		getPoolStats('usdc');
-		getCapPoolInfo();
+		getapxPoolInfo();
 	}
 
 }

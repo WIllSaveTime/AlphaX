@@ -99,7 +99,7 @@
 	}
 
 	:global(.pos) {
-		color: var(--green);
+		color: var(--btn-color);
 	}
 	:global(.neg) {
 		color: var(--red);

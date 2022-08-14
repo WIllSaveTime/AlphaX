@@ -6,9 +6,9 @@ import { getContract } from './contracts'
 import { getOrders, getPositions } from './methods'
 
 import { formatUnits, formatTrades, formatOrders, formatPositions, setActiveProducts, getChainData } from './utils'
-import { history, orders, positions, address, poolStats } from './stores'
+import { history, orders, positions, address, poolStats, totalPositionETHMargin, totalPositionUSDCMargin } from './stores'
 
-// const graph_url = 'https://api.thegraph.com/subgraphs/name/0xcap/cap3';
+// const graph_url = 'https://api.thegraph.com/subgraphs/name/0xapx/apx3';
 const graph_url = 'https://api.thegraph.com/subgraphs/name/cooker0910/prototype';
 
 export async function getVolume() {
@@ -37,10 +37,8 @@ export async function getVolume() {
 
 	let datas = json.data && json.data.datas;
   	
-  	// console.log('datas', datas);
-  	
-	// let volumeETH = 420000; // cumulative previous versions of CAP
-	let volumeETH = 0; // cumulative previous versions of CAP
+	// let volumeETH = 420000; // cumulative previous versions of apx
+	let volumeETH = 0; // cumulative previous versions of apx
 	let volumeUSD = 0; // v2 + v1
 	for (const d of datas) {
 		// console.log('d', d);
@@ -338,7 +336,7 @@ export async function getPoolStats(currencyLabel) {
 	const currencies = getChainData('currencies');
 	if (!currencies) return;
 
-	const currency = currencies[currencyLabel];
+	const currency = currencies[currencyLabel].toLowerCase();
 
 	const response = await fetch(graph_url, {
 		method: 'POST',
@@ -348,7 +346,9 @@ export async function getPoolStats(currencyLabel) {
 		body: JSON.stringify({
 			query: `
 				query {
-				  datas(where: {id: "${currency}"}) {
+				  datas(
+						where: {id: "${currency}"}
+					) {
 				    id,
 				    cumulativeFees,
 				    cumulativePnl,
@@ -365,7 +365,6 @@ export async function getPoolStats(currencyLabel) {
 		})
 	});
 	const json = await response.json();
-	// console.log('json', json.data);
 
 	poolStats.update((x) => {
 		let d = json.data && json.data.datas && json.data.datas[0];
@@ -376,4 +375,60 @@ export async function getPoolStats(currencyLabel) {
 		};
 		return x;
 	})
+}
+
+export async function getTotalPosition() {
+	const response = await fetch(graph_url, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			query: `
+				query {
+				  positions(
+				    orderBy: createdAtTimestamp,
+				    orderDirection: desc
+				  ) {
+				  	id,
+				    productId,
+				    currency,
+				    margin,
+				    fee,
+				    size,
+				    leverage,
+				    price,
+				    isLong,
+				    createdAtTimestamp
+				  }
+				}
+			`
+		})
+	});
+
+	const json = await response.json();
+	// console.log('json', json)
+
+	let _positions = json.data && json.data.positions;
+
+	let _keys = _positions.map((e) => {return e.id;});
+
+	let _raw_positions = await getPositions(_keys);
+
+	let totallPostionETH = 0
+	let totalPositionUSDC = 0
+	const currencies = getChainData('currencies');
+	if (!currencies) return;
+	let i = 0;
+
+	for(const p of _positions) {
+		if (_raw_positions[i] && _raw_positions[i].size && _raw_positions[i].size.toString() * 1 > 0) {
+			if(currencies['weth'].toLowerCase() == p.currency.toLowerCase()) totallPostionETH += Number(p.margin);
+			if(currencies['usdc'].toLowerCase() == p.currency.toLowerCase()) totalPositionUSDC += Number(p.margin);
+		}
+		i++;
+	}
+
+	totalPositionETHMargin.set(totallPostionETH)
+	totalPositionUSDCMargin.set(totalPositionUSDC)
 }

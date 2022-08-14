@@ -199,7 +199,7 @@ export function initWebsocket() {
 
 	ws.onclose = (e) => {
 
-		console.log('Socket closed', e.code, e);
+		// console.log('Socket closed', e.code, e);
 
 		if (e.wasClean) {
 

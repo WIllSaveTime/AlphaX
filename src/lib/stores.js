@@ -57,13 +57,19 @@ export const slippage = derived([size, productId, currencyLabel], ([$size, $prod
 export const pools = writable({});
 export const poolStats = writable({});
 export const oldPools = writable({});
-export const capPool = writable({});
+export const apxPool = writable({});
 
 // Orders
 export const orders = writable([]);
 
 // Positions
 export const positions = writable([]);
+// Custom
+export const totalPositionETHMargin = writable();
+export const totalPositionUSDCMargin = writable();
+export const volume_ETH = writable();
+export const volume_USDC = writable();
+export const confirmApxReward = writable({});
 
 export const enhancedPositions = derived([orders, positions], ([$orders, $positions]) => {
 	// console.log('orders', $orders);
@@ -122,3 +128,5 @@ export const address = writable(null);
 export const allowances = writable({});
 
 export const wrongNetwork = writable(false);
+
+export const approveStatus = writable(false);

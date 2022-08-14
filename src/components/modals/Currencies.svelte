@@ -38,6 +38,7 @@
 		font-size: 120%;
 		cursor: pointer;
 		height: 74px;
+		color: var(--btn-color)
 	}
 	.row:not(.selected):hover {
 		background-color: var(--jet-dim);

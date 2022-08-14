@@ -15,6 +15,7 @@
 
 	let size;
 	let entire = false;
+	let funding;
 
 	let closePercent = 0, newAmount = data.size;
 
@@ -54,7 +55,8 @@
 			data.productId,
 			data.currencyLabel,
 			data.isLong,
-			sizeToSubmit
+			sizeToSubmit,
+			funding
 		);
 		submitIsPending = false;
 	}
@@ -74,9 +76,7 @@
 		// console.log('priceImpact', priceImpact);
 		let _data = JSON.parse(JSON.stringify(data));
 		_data.size = Math.min(_size * 1, data.size * 1);
-		// console.log('getUPL', _data, price);
 		pnl = await getUPL(_data, price);
-		// console.log('pnl', pnl);
 	}
 
 	$: calculatePnl($prices, size);
@@ -86,7 +86,9 @@
 	async function calculateRows() {
 
 		const product = await getProduct(data.productId);
-		// console.log(product, 'here')
+		let currentTime = Date.now();
+		let pastTime = currentTime / 1000 - data.timestamp
+		funding = (pastTime * data.margin * 0.001852 / 360000).toFixed(2);
 
 		rows = [
 			{
@@ -111,8 +113,8 @@
 				isEmpty: newAmount * 1 == data.size * 1
 			},
 			{
-				label: 'Fee',
-				value: `${product && product.fee || 0}%`,
+				label: 'Funding',
+				value: `${funding} ${formatCurrency(data.currencyLabel)}`,
 				isEmpty: !size
 			},
 			{

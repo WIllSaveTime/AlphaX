@@ -96,7 +96,7 @@
 		display: inline-block;
 	}
 	.button:hover {
-		background-color: var(--green-dim);
+		background-color: var(--btn-color);
 	}
 
 	.about, .coin-links {
@@ -154,7 +154,7 @@
 		font-size: 80%;
 	}
 	.links a:hover {
-		color: var(--green);
+		color: var(--btn-color);
 	}
 	.community {
 		padding-top: 64px;
@@ -184,13 +184,13 @@
 
 				<div class='token-icon-wrap'>
 					<div class='token-icon' in:fade={{ duration: 1500 }}>
-						<img src='/cap-3d.png' title='Alpha-X logo' alt='Alpha-X logo' />
+						<img src='/apx-3d.png' title='Alpha X logo' alt='Alpha X logo' />
 					</div>
 				</div>
 
 				<div class='button-wrap'>
-					<a class='button' href='https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x031d35296154279dc1984dcd93e392b1f946737b' target="_blank">Buy Alpha-X on Uniswap</a>
-					<div class='chains'>Set your network to {@html ARBITRUM_ICON} Arbitrum</div>
+					<a class='button' href='https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x031d35296154279dc1984dcd93e392b1f946737b' target="_blank">Buy Alpha X on QuickSwap</a>
+					<div class='chains'>Set your network to {@html POLYGON_ICON} Polygon</div>
 				</div>
 
 			</div>
@@ -201,7 +201,7 @@
 
 			<div class='item'>
 				<h4>{@html CHECKMARK_ICON} Revenue Producing</h4>
-				<p>Stake Alpha-X to get a share of income</p>
+				<p>Stake Alpha X to get a share of income</p>
 			</div>
 
 			<div class='item'>
@@ -217,23 +217,23 @@
 		</div>
 
 		<div class='coin-links'>
-			<a href='https://www.coingecko.com/en/coins/cap' target="_blank">CoinGecko</a>
-			<a href='https://coinmarketcap.com/currencies/cap/' target="_blank">CoinMarketCap</a>
+			<a href='https://www.coingecko.com/en/coins/apx' target="_blank">CoinGecko</a>
+			<a href='https://coinmarketapx.com/currencies/apx/' target="_blank">CoinMarketapx</a>
 		</div>
 		
 		<div class='community'>
-			<a href='https://discord.gg/zkdr8vnujz' target='_blank' title='Discord'>{@html DISCORD_ICON}</a>
-			<a href='https://t.me/capfin' target='_blank' title='Telegram'>{@html TELEGRAM_ICON}</a>
-			<a href='https://twitter.com/CapDotFinance' target='_blank' title='Twitter'>{@html TWITTER_ICON}</a>
-			<a href='https://github.com/0xcap' target='_blank' title='Github'>{@html GITHUB_ICON}</a>
+			<a href='https://discord.gg/alphax' target='_blank' title='Discord'>{@html DISCORD_ICON}</a>
+			<a href='https://t.me/alphax' target='_blank' title='Telegram'>{@html TELEGRAM_ICON}</a>
+			<a href='https://twitter.com/alphaxleverage?s=11&t=c-XUrTprPDq8wY23Oj1b9A' target='_blank' title='Twitter'>{@html TWITTER_ICON}</a>
+			<a href='https://github.com/alphax' target='_blank' title='Github'>{@html GITHUB_ICON}</a>
 		</div>
 
 		<div class='links'>
 			<a href='/'>Home</a>
-			<a href='https://docs.cap.finance/' target='_blank'>Docs</a>
-			<a href='https://www.tokenterminal.com/terminal/projects/cap' target='_blank'>Token Terminal</a>
-			<a href='https://defillama.com/protocol/cap' target='_blank'>Defi Llama</a>
-			<a href='https://www.immunefi.com/bounty/cap' target='_blank'>Immunefi</a>
+			<a href='https://alpha-x-1.gitbook.io/documentation' target='_blank'>Docs</a>
+			<a href='https://www.tokenterminal.com/terminal/projects/apx' target='_blank'>Token Terminal</a>
+			<a href='https://defillama.com/protocol/apx' target='_blank'>Defi Llama</a>
+			<a href='https://www.immunefi.com/bounty/apx' target='_blank'>Immunefi</a>
 		</div>
 
 	</div>

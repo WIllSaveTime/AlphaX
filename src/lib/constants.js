@@ -1,12 +1,12 @@
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000';
-export const WETH_ADDR = '0x976f4671d3Bf00eA9FfBAB55174411E9568413dA'
+export const WETH_ADDR = '0x77eB6cD3debD391cc78e6c4a3a7495796bc435D5'
 
 export const HISTORY_COUNT = 10;
 
 export const CURRENCY_LOGOS = {
 	weth: '/logos/ETH.svg',
 	usdc: '/logos/USDC.svg',
-	cap: '/logos/CAP.svg',
+	apx: '/logos/apx.svg',
 	matic: '/logos/MATIC.svg',
 	alpha: '/logos/ALPHA.svg'
 }
@@ -15,14 +15,14 @@ export const ABIS = {
 	router: [
 		"function trading() view returns(address)",
 		"function treasury() view returns(address)",
-		"function capPool() view returns(address)",
+		"function apxPool() view returns(address)",
 		"function oracle() view returns(address)",
 
 		"function getPool(address currency) view returns(address)",
 		"function getPoolShare(address currency) view returns(uint256)",
-		"function getCapShare(address currency) view returns(uint256)",
+		"function getApxShare(address currency) view returns(uint256)",
 		"function getPoolRewards(address currency) view returns(address)",
-		"function getCapRewards(address currency) view returns(address)"
+		"function getApxRewards(address currency) view returns(address)"
 	],
 	trading: [
 		"function getProduct(bytes32 productId) view returns(tuple(uint64 maxLeverage, uint64 liquidationThreshold, uint64 fee, uint64 interest))",
@@ -30,10 +30,10 @@ export const ABIS = {
 		"function getPositions(bytes32[] keys) view returns(tuple(uint64 size, uint64 margin, uint64 timestamp, uint64 price)[])",
 
 		"function submitOrder(bytes32 productId,address currency,bool isLong,uint256 margin,uint256 size) payable",
-		"function submitCloseOrder(bytes32 productId,address currency,bool isLong,uint256 size) payable",
+		"function submitCloseOrder(bytes32 productId,address currency,bool isLong,uint256 size,uint256 funding) payable",
 		"function cancelOrder(bytes32 productId,address currency,bool isLong)",
 
-		"event NewOrder(bytes32 indexed key,address indexed user,bytes32 indexed productId,address currency,bool isLong,uint256 margin,uint256 size,bool isClose)",
+		"event NewOrder(bytes32 indexed key,address indexed user,bytes32 indexed productId,address currency,bool isLong,uint256 margin,uint256 size,bool isClose, uint256 funding)",
 		"event PositionUpdated(bytes32 indexed key,address indexed user,bytes32 indexed productId,address currency,bool isLong,uint256 margin,uint256 size,uint256 price,uint256 fee)",
 		"event ClosePosition(bytes32 indexed key,address indexed user,bytes32 indexed productId,address currency,bool isLong,uint256 price,uint256 margin,uint256 size,uint256 fee,int256 pnl,bool wasLiquidated)"
 	],
@@ -52,7 +52,8 @@ export const ABIS = {
 	rewards: [
 		"function getClaimableReward() view returns(uint256)",
 
-		"function collectReward()"
+		"function collectReward()",
+		"function collectRewardApx(uint256 amount)"
 	],
 	treasury: [
 		
@@ -84,9 +85,9 @@ export const CHAINDATA = {
 		poolInception: {
 			weth: 1637154307000,
 			usdc: 1637154307000,
-			cap: 1637154307000
+			apx: 1637154307000
 		},
-		cap: '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9'
+		apx: '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9'
 	},
 	42161: {
 		label: 'Arbitrum',
@@ -100,24 +101,24 @@ export const CHAINDATA = {
 		poolInception: {
 			weth: 1637154307000,
 			usdc: 1637154307000,
-			cap: 1637154307000
+			apx: 1637154307000
 		},
-		cap: '0x031d35296154279DC1984dCD93E392b1f946737b'
+		apx: '0x031d35296154279DC1984dCD93E392b1f946737b'
 	},
 	80001: {
 		label: 'Mumbai',
-		router: '0x5D7a5D61f03F74bec06663740B8bA4acbD7FdF40',
+		router: '0x18e47D360e7F5258b51F10E2786143d50F1D9110',
 		explorer: 'https://mumbai.polygonscan.com/',
-		rpc: 'https://rpc-mumbai.maticvigil.com', // for walletconnect
+		rpc: 'https://polygon-mumbai.g.alchemy.com/v2/VFCowlE8aG7cSC17T52wbQAL387ycrzc', // for walletconnect
 		currencies: {
-			weth: '0x976f4671d3Bf00eA9FfBAB55174411E9568413dA',
-			usdc: '0x4F18aCA9C35bA6169f8e43179Ab56c0710216eA0'
+			weth: '0xec8225B3cae93cad610380B6C3d522be98090C20',
+			usdc: '0x77Ca06E65915DC8e8A00cFE3D39E4c48E0060d27'
 		},
 		poolInception: {
-			weth: 1658506086000,
-			usdc: 1658506086000,
-			cap: 1658506086000
+			weth: 1658797825000,
+			usdc: 1658797825000,
+			apx: 1658797825000
 		},
-		cap: '0x9621b905e786556ec1879ac6bc730e617b35e4f0'
+		apx: '0x303043E85AfA2af16004A9f62496c28f07CE76B1'
 	}
 }

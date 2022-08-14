@@ -76,11 +76,11 @@
 		border-bottom: 1px solid var(--jet-dim);
 	}
 	.trade:hover {
-		background-color: var(--jet-dim);
+		background-color: var(--btn-color);
 	}
 
 	.column {
-
+		color: var(--jet-dim)
 	}
 
 	.column-product {

@@ -1,5 +1,6 @@
 <script>
 	export let isRed = false;
+	export let isLong = false;
 	export let isLoading = false;
 	export let onClick = null;
 	export let label;
@@ -29,9 +30,12 @@
 		color: var(--red-dark);
 		background-color: var(--red);
 	}
+	button.long {
+		background-color: #00C805;
+	}
 
 	button:not(.loading):hover {
-		background-color: var(--orange);
+		background-color: #409d42;
 	}
 	button.red:not(.loading):hover {
 		background-color: var(--red-dim);
@@ -54,8 +58,8 @@
 
 {#if wrap}
 <div class='wrap'>
-	<button class:loading={isLoading} class:red={isRed} on:click={onClick} data-intercept='true'>{label}</button>
+	<button class:loading={isLoading} class:red={isRed} class:long={isLong} on:click={onClick} data-intercept='true'>{label}</button>
 </div>
 {:else}
-<button class:small={small} class:loading={isLoading} class:red={isRed} on:click={onClick} data-intercept='true'>{label}</button>
+<button class:small={small} class:loading={isLoading} class:red={isRed} class:long={isLong} on:click={onClick} data-intercept='true'>{label}</button>
 {/if}

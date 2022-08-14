@@ -104,7 +104,7 @@
 			display: inline-block;
 		}
 		.button:hover {
-			background-color: var(--green-dim);
+			background-color: var(--btn-color);
 		}
 
 		.volume .label {
@@ -166,7 +166,7 @@
 		white-space: nowrap;
 	}
 	.links a:hover {
-		color: var(--green);
+		color: var(--btn-color);
 	}
 	.community {
 		padding-top: 48px;
@@ -189,15 +189,6 @@
 		background-color: var(--onyx);
 	}
 
-	.mountains {
-		opacity: 0.75;
-		width: 100%;
-	}
-
-	.mountains img {
-		max-width: 100%;
-	}
-
 </style>
 
 <div class='home-wrap'>
@@ -209,7 +200,7 @@
 			<div class='hero-inner'>
 				
 				<div>
-					<div class='tagline'>Free Decentralized Perpetual Exchange</div>
+					<div class='tagline'>Decentralized Perpetual Leverage Exchange</div>
 
 					<div class="pill">0% Fees</div>
 					<div class="pill">50× Leverage</div>
@@ -256,17 +247,17 @@
 		<div class='sep'>&nbsp;</div>
 		
 		<div class='community'>
-			<a href='https://discord.gg/zkdr8vnujz' target='_blank' title='Discord'>{@html DISCORD_ICON}</a>
-			<a href='https://twitter.com/CapDotFinance' target='_blank' title='Twitter'>{@html TWITTER_ICON}</a>
-			<a href='https://github.com/0xcap' target='_blank' title='Github'>{@html GITHUB_ICON}</a>
+			<a href='https://discord.gg/alpha' target='_blank' title='Discord'>{@html DISCORD_ICON}</a>
+			<a href='https://twitter.com/alphaxleverage?s=11&t=c-XUrTprPDq8wY23Oj1b9A' target='_blank' title='Twitter'>{@html TWITTER_ICON}</a>
+			<a href='https://github.com/alpha' target='_blank' title='Github'>{@html GITHUB_ICON}</a>
 		</div>
 
 		<div class='links'>
-			<a href='#/buy'>Buy Alpha-X</a>
-			<a href='https://docs.cap.finance/#white-papers' target='_blank'>Whitepapers</a>
-			<a href='https://docs.cap.finance/' target='_blank'>Docs</a>
-			<a href='https://www.tokenterminal.com/terminal/projects/cap' target='_blank'>Token Terminal</a>
-			<a href='https://defillama.com/protocol/cap' target='_blank'>Defi Llama</a>
+			<a href='#/buy'>Buy Alpha X</a>
+			<a href='https://alpha-x-1.gitbook.io/documentation' target='_blank'>Whitepapers</a>
+			<a href='https://alpha-x-1.gitbook.io/documentation' target='_blank'>Docs</a>
+			<a href='https://www.tokenterminal.com/terminal/projects/apx' target='_blank'>Token Terminal</a>
+			<a href='https://defillama.com/protocol/apx' target='_blank'>Defi Llama</a>
 		</div>
 
 	</div>

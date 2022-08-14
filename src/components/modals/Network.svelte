@@ -18,7 +18,7 @@
 <Modal title='Invalid Network' showHeader={true} showCancel={true}>
 
 	<div class='note'>
-		Select Polygon(mumbai) as your wallet's network to trade or pool on Alpha-X.
+		Select Polygon(mumbai) as your wallet's network to trade or pool on Alpha X.
 	</div>
 
 	<Button wrap={true} onClick={() => {switchChains()}} label={`Switch to Polygon`} />

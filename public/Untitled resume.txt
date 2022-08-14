@@ -1,0 +1,64 @@
+---------------------------
+Jin Jin
+---------------------------
+Occupation: Full stack/ Blockchain developer 
+Nationality: Singaporean 
+Date of birth: 1998-09-10 
+Address: Block 61, Singapore 330061 
+Phone: (585)9284149 
+Email: cooker0910@gmail.com 
+
+        
+//  Objective //
+        
+Adept at full event management, assisting clients from event conception to fruition. Detail oriented and able to manage several projects at once. Experienced in developing strong and fruitful relationships with clients and vendors. Wholly focused on client satisfaction and event success. Equipped with a diverse and promising skill-set. Able to effectively self-manage during independent projects, as well as collaborate in a team setting.
+            
+//  Experience //
+        
+_ Blockchain Developer _
+Alpha X
+Bermuda
+2022-02 - Present
+This is remote role, part time job
+            
+//  Education //
+        
+_ Bachelor's Degree _
+Murdoch University
+Singapore, 2014-09 - 2017-06
+
+            
+//  Skills //
+        
+• Smart Contract
+            
+• web3
+            
+• React
+            
+• Nodejs
+            
+• express
+            
+• Knack
+            
+• Zapier
+            
+• Integromat
+            
+• Solidity
+            
+• Typescript
+            
+• Docker
+            
+• Ubuntu
+            
+• Golang
+            
+• Bubble.io
+            
+//  Languages //
+        
+• French, Advanced 
+            

@@ -30,9 +30,10 @@ export async function getContract(contractName, withSigner, _currencyLabel) {
 		}
 		return;
 	}
-	
+
 	// hideModal();
 	Stores.wrongNetwork.set(false);
+	// console.log('contracts', contracts, contractName)
 
 	if (contracts[contractName]) {
 		if (withSigner) {
@@ -58,10 +59,10 @@ export async function getContract(contractName, withSigner, _currencyLabel) {
 		}
 	}
 
-	// CAP (ERC20)
-	if (!contracts['cap']) {
-		const cap = CHAINDATA[_chainId].cap;
-		contracts['cap'] = new ethers.Contract(cap, ABIS.erc20, _provider);
+	// apx (ERC20)
+	if (!contracts['apx']) {
+		const apx = CHAINDATA[_chainId].apx;
+		contracts['apx'] = new ethers.Contract(apx, ABIS.erc20, _provider);
 	}
 
 	let address;
@@ -70,33 +71,27 @@ export async function getContract(contractName, withSigner, _currencyLabel) {
 
 	let abiName = contractName;
 
-	if (contractName.toLowerCase().includes('oldpoolrewards')) {
-		if (_currencyLabel == 'weth') {
-			address = '0x9190338f23bE9024A9F9628E44cd169926fE7795';
-		} else if (_currencyLabel == 'usdc') {
-			address = '0x996DA299Fb8247dbc2ef45299b62B897d89C01D4';
-		}
-		abiName = 'rewards';
-	} else if (contractName.toLowerCase().includes('oldpool')) {
-		if (_currencyLabel == 'weth') {
-			address = '0xB224F2689BC0aFc5b6721a0807d07017D8CDddf8';
-		} else if (_currencyLabel == 'usdc') {
-			address = '0x07B0B00B9008798055071dde6f2d343782b35dC6';
-		}
-		abiName = 'pool';
-	} else if (contractName.toLowerCase().includes('poolrewards')) {
+	if (contractName.toLowerCase().includes('poolrewards')) {
 		address = await router.getPoolRewards(currency);
+		// console.log('pool reward address', address)
 		// if (_currencyLabel == 'weth') {
-		// 	address = '0x29163356bBAF0a3bfeE9BA5a52a5C6463114Cb5f';
+		// 	address = '0x9FBA8B9A6335EDAe7F9d205e0D8873566E6311Bd';
 		// } else if (_currencyLabel == 'usdc') {
-		// 	address = '0x10f2f3B550d98b6E51461a83AD3FE27123391029';
+		// 	address = '0xA2136E53c2A39513b968C42D86f449BC8Ef7A89d';
 		// }
 		abiName = 'rewards';
-	} else if (contractName.toLowerCase().includes('caprewards')) {
-		address = await router.getCapRewards(currency);
+	} else if (contractName.toLowerCase().includes('apxrewards')) {
+		address = await router.getApxRewards(currency);
+		// console.log('apx reward address', address)
+		// if (_currencyLabel == 'weth') {
+		// 	address = '0x6fCC7768CdcE48aa4e94d839E00f133de845B9FE';
+		// } else if (_currencyLabel == 'usdc') {
+		// 	address = '0xd17E84ec5Ef476c14C91c146B1FAcE6a7adAFd5A';
+		// }
 		abiName = 'rewards';
-	} else if (contractName == 'capPool') {
+	} else if (contractName == 'apxPool') {
 		address = await router[contractName]();
+		// console.log('apx pool', address)
 		abiName = 'pool';
 	} else if (contractName.toLowerCase().includes('pool')) {
 		address = await router.getPool(currency);
@@ -105,9 +100,11 @@ export async function getContract(contractName, withSigner, _currencyLabel) {
 		// } else if (_currencyLabel == 'usdc') {
 		// 	address = '0x958cc92297e6F087f41A86125BA8E121F0FbEcF2';
 		// }
+		// console.log('pool address', address)
 		abiName = 'pool';
 	} else {
 		address = await router[contractName]();
+		// console.log('else addr', address)
 	}
 		
 	// console.log('contract address', abiName, address);
@@ -116,7 +113,7 @@ export async function getContract(contractName, withSigner, _currencyLabel) {
 
 	contracts[contractName] = new ethers.Contract(address, abi, _provider);
 
-	// console.log('contracts---', contracts);
+	// console.log('contracts---', contracts[contractName]);
 
 	if (withSigner) {
 		return contracts[contractName].connect(_signer);

@@ -21,11 +21,11 @@
 	}
 
 	a:hover {
-		color: var(--green);
+		color: var(--btn-color);
 	}
 
 	.active {
-		color: var(--green);
+		color: var(--btn-color);
 		font-weight: 700;
 	}
 

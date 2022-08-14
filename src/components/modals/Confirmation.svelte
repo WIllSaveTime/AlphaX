@@ -1,6 +1,6 @@
 <script>
 
-	import { submitOrder, getProduct } from '../../lib/methods'
+	import { submitOrder, getProduct, approveCurrency } from '../../lib/methods'
 	
 	import { formatToDisplay, formatCurrency, calculateLiquidationPrice, getPriceImpact, showToast, hideModal } from '../../lib/utils'
 	
@@ -19,27 +19,27 @@
 	async function _submitNewPosition() {
 
 		isSubmitting = true;
-
-		const error = await submitOrder(data.isLong);
-		if (error) {
-			console.log('error', error)
-			showToast(error);
-		} else {
-			// balance -= $margin * 1;
-			// available -= $size * 1;
-			// if (balance < 0) balance = 0;
-			// if (available < 0) available = 0;
-			size.set();
-
-			// This refetches buying power and available balance
-			const _leverage = $leverage;
-			leverage.set(0);
-			leverage.set(_leverage);
-			hideModal();
+		const result = await approveCurrency(data.currencyLabel, 'trading', data.size);
+		if(result === 'approved') {
+			const error = await submitOrder(data.isLong);
+			if (error) {
+				console.log('error', error.message)
+				showToast(error);
+			} else {
+				// balance -= $margin * 1;
+				// available -= $size * 1;
+				// if (balance < 0) balance = 0;
+				// if (available < 0) available = 0;
+				size.set();
+	
+				// This refetches buying power and available balance
+				const _leverage = $leverage;
+				leverage.set(0);
+				leverage.set(_leverage);
+				hideModal();
+			}
 		}
-
 		isSubmitting = false;
-
 	}
 
 	let priceImpact = getPriceImpact(data.size, data.productId, data.currencyLabel);
@@ -47,18 +47,18 @@
 	let rows = [];
 
 	function findExistingPosition() {
-		// console.log($positions, 'positions')
 		for (const pos of $positions) {
-			if (pos.currencyLabel == data.currencyLabel && pos.isLong == data.isLong) return pos;
+			if (pos.currencyLabel == data.currencyLabel && pos.isLong == data.isLong && pos.productId == data.productId) {
+				return pos;
+			}
 		}
 	}
 
 	let existingPosition = findExistingPosition();
 
-	async function calculateRows(price) {
+	const calculateRows = async(price) => {
 
 		const product = await getProduct(data.productId);
-		// console.log(product, 'confirm')
 
 		let _existingPosition = existingPosition;
 
@@ -132,13 +132,13 @@
 				value: `${formatToDisplay(newLeverage)}×`,
 				anteriorValue: _existingPosition.leverage && `${formatToDisplay(_existingPosition.leverage)}×`
 			},
-			{
-				label: 'Fee',
-				value: `${product.fee || 0}%`
-			},
+			// {
+			// 	label: 'Fee',
+			// 	value: `${product.fee || 0}%`
+			// },
 			{
 				label: 'Funding',
-				value: `-${formatToDisplay(product.interest/(360*24)) || 0}% / h`
+				value: `-${formatToDisplay(product.interest /(360*24)) || 0}% / h`
 			}
 		];
 

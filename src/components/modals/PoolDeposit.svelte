@@ -2,9 +2,11 @@
 
 	import { onMount } from 'svelte'
 
-	import { formatToDisplay, formatCurrency } from '../../lib/utils'
+	import { formatToDisplay, formatCurrency, hideModal } from '../../lib/utils'
 	
-	import { deposit, depositCAP, getBalanceOf } from '../../lib/methods'
+	import { deposit, depositapx, getBalanceOf, approveCurrency } from '../../lib/methods'
+
+	import { allowances, apxPool } from '../../lib/stores';
 	
 	import Modal from './Modal.svelte'
 	import DataList from '../layout/DataList.svelte'
@@ -13,26 +15,34 @@
 	export let data;
 
 	let amount;
+	let result;
 
 	async function calculateShare() {
 		
 	}
 
 	let submitIsPending = false;
-	async function _submit() {
+	const _submit = async() =>{
 		submitIsPending = true;
-		let error;
-		if (data.currencyLabel == 'cap') {
-			error = await depositCAP(
-				amount
-			);
+		if(data.currencyLabel == 'apx') {
+			result = await approveCurrency(data.currencyLabel, 'apxPool', amount)
 		} else {
-			error = await deposit(
-				data.currencyLabel,
-				amount
-			);
+			result = await approveCurrency(data.currencyLabel, 'pool' + data.currencyLabel, amount);
 		}
-		submitIsPending = false;
+		if (result === 'approved') {
+			let error;
+			if (data.currencyLabel == 'apx') {
+				error = await depositapx(
+					amount
+				);
+			} else {
+				error = await deposit(
+					data.currencyLabel,
+					amount
+				);
+			}
+			submitIsPending = false;
+		}
 	}
 
 	let loading = false;
@@ -62,8 +72,8 @@
 		},
 		{
 			label: 'Wallet Balance',
-			value: `${formatToDisplay(balance)}`,
-			onclick: setMaxAmount,
+			value: `${formatToDisplay(balance)}` + formatCurrency(data.currencyLabel),
+			// onclick: setMaxAmount,
 			isEmpty: loading
 		}
 	];
@@ -71,9 +81,19 @@
 </script>
 
 <style>
+	.closeDiv{
+		height: 10px;
+	}
+	.close{
+		color: black;
+		float: right;
+		padding-right: 10px;
+		cursor: pointer;
+	}
 </style>
 
 <Modal>
+	<div class="closeDiv"><span on:click={hideModal} class="close">x</span></div>
 	<DataList data={rows} bind:value={amount} onSubmit={_submit} />
 	<Button wrap={true} isLoading={!amount || submitIsPending} onClick={_submit} label={`Deposit into ${formatCurrency(data.currencyLabel)} pool`} />
 </Modal>

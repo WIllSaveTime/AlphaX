@@ -4,7 +4,7 @@ import { ethers } from 'ethers'
 
 import { provider } from './stores'
 
-import { getAllowance, getPoolInfo, getOldPoolInfo, getCapPoolInfo } from './methods'
+import { getAllowance, getPoolInfo, getOldPoolInfo, getapxPoolInfo } from './methods'
 import { getUserOrders, getUserPositions } from './graph'
 import { orders } from './stores'
 import { showToast, formatCurrency } from './utils'
@@ -76,15 +76,15 @@ async function handleTxComplete(type, details) {
 	} else if (type == 'pool-collect-old') {
 		showToast(`Collected rewards from ${formatCurrency(details.currencyLabel)} pool.`, 'success');
 		await getOldPoolInfo(details.currencyLabel);
-	} else if (type == 'cap-deposit') {
-		showToast('Deposited Alpha-X into pool.', 'success');
-		await getCapPoolInfo();
-	} else if (type == 'cap-withdraw') {
-		showToast('Withdrew Alpha-X from pool.', 'success');
-		await getCapPoolInfo();
-	} else if (type == 'cap-collect') {
-		showToast('Collected rewards from Alpha-X pool.', 'success');
-		await getCapPoolInfo();
+	} else if (type == 'apx-deposit') {
+		showToast('Deposited Alpha X into pool.', 'success');
+		await getapxPoolInfo();
+	} else if (type == 'apx-withdraw') {
+		showToast('Withdrew Alpha X from pool.', 'success');
+		await getapxPoolInfo();
+	} else if (type == 'apx-collect') {
+		showToast('Collected rewards from Alpha X pool.', 'success');
+		await getapxPoolInfo();
 	}
 
 }

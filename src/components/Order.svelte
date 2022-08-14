@@ -1,19 +1,37 @@
 <script>
 
-	import { onMount } from 'svelte'
 
 	import Button from './layout/Button.svelte'
 
 	import { PRODUCTS } from '../lib/products'
 
-	import { submitOrder, approveCurrency, getBalanceOf } from '../lib/methods'
+	import { getBalanceOf } from '../lib/methods'
 
-	import { showModal, showToast, shortSymbol, getCachedLeverage, formatToDisplay, formatCurrency } from '../lib/utils'
-	import { CARET_DOWN } from '../lib/icons'
+	import { showModal, showToast, getCachedLeverage, formatToDisplay, formatCurrency } from '../lib/utils'
 
-	import { address, productId, product, currencyLabel, leverage, size, margin, marginPlusFee, isSubmittingShort, isSubmittingLong, prices, allowances } from '../lib/stores'
+	import { 
+		address, 
+		productId, 
+		product, 
+		currencyLabel, 
+		leverage, 
+		size, 
+		margin, 
+		marginPlusFee, 
+		isSubmittingShort, 
+		isSubmittingLong, 
+		prices, 
+		pools, 
+		totalPositionETHMargin,
+		totalPositionUSDCMargin
+	} from '../lib/stores'
 
-	import { getPriceImpact } from '../lib/utils'
+	import { getPriceImpact, hideModal } from '../lib/utils'
+
+	
+	let poolEntries = [];
+	$: poolEntries = Object.entries($pools).sort((a,b) => {return a[0] > b[0] ? -1 : 1});
+
 
 	// functions
 
@@ -26,6 +44,22 @@
 		
 		if (!$size) return focusAmount();
 		if (!$address) return showToast('Connect your wallet to trade.');
+
+		for(var i = 0; i < poolEntries.length; i ++) {
+			if(poolEntries[i][0] == $currencyLabel) {
+				if(poolEntries[i][1].tvl * 0.1 < $margin) {
+					showToast('MAX Margin Amount is 10% of Pool Size', 'success')
+					hideModal();
+					return
+				}
+				let positionSize = $currencyLabel == 'weth' ? $totalPositionETHMargin : $totalPositionUSDCMargin
+				if(poolEntries[i][1].tvl * 0.8 < (positionSize / 100000000) + $margin) {
+					showToast(`Total open positions are limited to 80% of the ${$currencyLabel} pool amount`, 'success')
+					hideModal();
+					return
+				}
+			}
+		}
 
 		if ($size * 1 > PRODUCTS[$productId].maxLiquidity[$currencyLabel]) return showToast('Order size exceeds maximum allowed on this market.');
 
@@ -58,10 +92,6 @@
 
 		// isSubmittingLong.set(false);
 		// isSubmittingShort.set(false);
-	}
-
-	async function _approveCurrency() {
-		const result = await approveCurrency($currencyLabel, 'trading');
 	}
 
 	function setInitialLeverage(_product, _productId) {
@@ -158,7 +188,7 @@
 		text-align: right;
 	}
 	input:hover, input:focus {
-		border-color: var(--green);
+		border-color: var(--btn-color);
 	}
 
 	.label {
@@ -183,6 +213,10 @@
 		grid-gap: 10px;
 		padding: var(--base-padding);
 		padding-top: 0;
+	}
+
+	.buttons .long-button {
+		background-color: #00C805;
 	}
 
 	.details {
@@ -227,6 +261,7 @@
 	.detail-value {
 		color: var(--rich-black);
 	}
+	
 
 </style>
 
@@ -250,12 +285,8 @@
 	</div>
 
 	<div class='buttons'>
-		<!-- {#if $allowances[$currencyLabel] && $allowances[$currencyLabel]['trading'] * 1 == 0} -->
 		<Button isRed={true} isLoading={$isSubmittingShort} label='Short' onClick={() => {_submitNewPosition(false)}} /> 
-		<Button isLoading={$isSubmittingLong} label='Long' onClick={() => {_submitNewPosition(true)}} />
-		<!-- {:else}
-		<Button label={`Approve ${formatCurrency($currencyLabel)}`} onClick={() => {_approveCurrency()}} />
-		{/if} -->
+		<Button isLong={true} isLoading={$isSubmittingLong} label='Long' onClick={() => {_submitNewPosition(true)}} />
 	</div>
 
 	<div class='details'>
@@ -270,10 +301,10 @@
 				<div class='detail-value'>${formatToDisplay(sizeInUSD, 2)}</div>
 			</div>
 			{/if}
-			<div class='row'>
+			<!-- <div class='row'>
 				<div class='detail-label'>Fee</div>
 				<div class='detail-value'>0%</div>
-			</div>
+			</div> -->
 			{#if $address}
 	      		{#if Math.abs(priceImpact * 1) > 0.1}
 				<div class='row'>
@@ -296,9 +327,9 @@
 	</div>
 
 	{#if !$address}
-	<div class='note'>Alpha-X is an open protocol to trade crypto perpetuals with 0 fees. <a data-intercept="true" on:click={() => {showModal('Connect')}}>Connect your wallet</a> on Polygon(Mumbai) to get started.</div>
+	<div class='note'>Alpha X is an open protocol to trade crypto perpetuals with 0 fees. <a data-intercept="true" on:click={() => {showModal('Connect')}}>Connect your wallet</a> on Polygon(Mumbai) to get started.</div>
 	{:else if $address && balance * 1 == 0}
-	<div class='note'><a href='https://docs.cap.finance/setting-up-your-wallet' target='_blank'>Bridge funds</a> to Polygon to start trading.</div>
+	<div class='note'><a href='https://docs.apx.finance/setting-up-your-wallet' target='_blank'>Bridge funds</a> to Polygon to start trading.</div>
 	{/if}
 	
 

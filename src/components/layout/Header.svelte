@@ -61,14 +61,14 @@
 	}
 
 	img {
-		height: 12px;
+		height: 30px;
 		filter: grayscale(1);
-		opacity: 0.65;
+		/* opacity: 0.65; */
 	}
 
 	.logo:hover img {
 		filter: grayscale(1);
-		opacity: 1;
+		/* opacity: 1; */
 	}
 
 	.logo.active img {
@@ -84,11 +84,11 @@
 
 		<div class='left'>
 			<a class='logo' class:active={!$currentPage || $currentPage == 'home'} href='/'>
-				<img src='/logos/ALPHA.svg' title='Alpha-X Home' alt='Alpha-X Home' />
+				<img src='/logos/ALPHA.svg' title='Alpha X Home' alt='Alpha X Home' />
 			</a>
 			<a class='link' class:active={$currentPage == 'trade'} href='#/trade'>Trade</a>
 			<a class='link' class:active={$currentPage == 'pool'} href='#/pool'>Pool</a>
-			<a class='link' href='https://docs.cap.finance' target='_blank'>Docs</a>
+			<a class='link' href='https://alpha-x-1.gitbook.io/documentation' target='_blank'>Docs</a>
 		</div>
 
 		<div class='right'>

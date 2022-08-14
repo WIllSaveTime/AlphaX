@@ -215,7 +215,7 @@
 		color: var(--sonic-silver);
 	}
 	.column-close a:hover {
-		color: var(--green);
+		color: var(--btn-color);
 	}
 
 	.status :global(svg) {

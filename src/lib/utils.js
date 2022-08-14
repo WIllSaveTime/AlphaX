@@ -20,50 +20,50 @@ import { component, currentPage, activeModal, toast, chainId, activeProducts, pr
 // Price title
 export function setTitle(product, price) {
 	if (get(currentPage) == 'trade') {
-		document.title = `${product} ${price} | Alpha-X`;
+		document.title = `${product} ${price} | Alpha X`;
 	}
 }
 
 // Text utils
 export function shortAddress(address) {
 	if (!address) return;
-	return address.substring(0,2) + '…' + address.slice(-4);
+	return address.substring(0, 2) + '…' + address.slice(-4);
 }
 export function shortSymbol(symbol) {
 	if (!symbol) return '';
-	return symbol.substring(0,symbol.length-4);
+	return symbol.substring(0, symbol.length - 4);
 }
 export function txLink(hash) {
 	const explorer = getChainData('explorer');
-	return `${explorer}/tx/${hash}`; 
+	return `${explorer}/tx/${hash}`;
 }
 export function addrLink(addr) {
 	const explorer = getChainData('explorer');
-	return `${explorer}/address/${addr}`; 
+	return `${explorer}/address/${addr}`;
 }
 export function formatCurrency(_currencyLabel) {
 	if (!_currencyLabel) return 'ETH';
 	if (_currencyLabel.toLowerCase() == 'weth') return 'ETH';
 	if (_currencyLabel.toLowerCase() == 'usdc') return 'USDC';
-	if (_currencyLabel.toLowerCase() == 'cap') return 'CAP';
+	if (_currencyLabel.toLowerCase() == 'apx') return 'APX';
 	return _currencyLabel;
 }
 export function formatToDisplay(amount, maxPrecision, fixPrecision) {
 	if (amount == undefined || isNaN(amount)) return '';
 	if (!maxPrecision) maxPrecision = 100;
 
-	if (!fixPrecision && amount * 1 <= 100 && (amount * 1).toFixed(6)*1 == Math.round(amount * 1)) return Math.round(amount);
-	
+	if (!fixPrecision && amount * 1 <= 100 && (amount * 1).toFixed(6) * 1 == Math.round(amount * 1)) return Math.round(amount);
+
 	if (amount * 1 >= 100000 || amount * 1 <= -100000) {
-		return Math.round(amount*1).toLocaleString();
+		return Math.round(amount * 1).toLocaleString();
 	} else if (amount * 1 >= 10 || amount * 1 <= -10) {
 		return (amount * 1).toFixed(2);
 	} else if (amount * 1 >= 1 || amount * 1 <= -1) {
-		return +(amount * 1).toFixed(Math.min(maxPrecision,2));
+		return +(amount * 1).toFixed(Math.min(maxPrecision, 2));
 	} else if (amount * 1 >= 0.1 || amount * 1 <= -0.1) {
-		return +(amount * 1).toFixed(Math.min(maxPrecision,4));
+		return +(amount * 1).toFixed(Math.min(maxPrecision, 4));
 	} else {
-		return +(amount * 1).toFixed(Math.min(maxPrecision,6));
+		return +(amount * 1).toFixed(Math.min(maxPrecision, 6));
 	}
 }
 export function displayPricePercentChange(last, initial) {
@@ -73,7 +73,7 @@ export function displayPricePercentChange(last, initial) {
 	if (diff >= 0) {
 		string += '+';
 	}
-	string += formatToDisplay(diff*100, 2, true) || '';
+	string += formatToDisplay(diff * 100, 2, true) || '';
 	return string;
 }
 
@@ -105,7 +105,7 @@ export function getCachedLeverage(_productId) {
 		try {
 			cl = JSON.parse(cl);
 			return cl[_productId] * 1;
-		} catch(e) { console.log("Error", e) }
+		} catch (e) { console.log("Error", e) }
 	} else {
 		return null;
 	}
@@ -118,7 +118,7 @@ export function setCachedLeverage(_productId, _leverage) {
 		cl[_productId] = _leverage * 1;
 		localStorage.setItem('leverage', JSON.stringify(cl));
 	} else {
-		localStorage.setItem('leverage', JSON.stringify({[_productId]: _leverage}));
+		localStorage.setItem('leverage', JSON.stringify({ [_productId]: _leverage }));
 	}
 }
 
@@ -140,12 +140,12 @@ export function showToast(data, type, id) {
 	let message = parseErrorToString(data);
 	if (!type) type = 'error';
 	if (!message) return;
-	toast.set({message, type, id});
+	toast.set({ message, type, id });
 	if (type == 'error') {
-		amplitude.getInstance().logEvent('Error', {message});
+		amplitude.getInstance().logEvent('Error', { message });
 	}
 	clearTimeout(timer);
-	timer = setTimeout(() => {hideToast()}, 7*1000);
+	timer = setTimeout(() => { hideToast() }, 7 * 1000);
 }
 export function hideToast(id) {
 	const _toast = get(toast);
@@ -157,7 +157,7 @@ export function hideToast(id) {
 
 // Modals
 export function showModal(name, data) {
-	activeModal.set({name, data});
+	activeModal.set({ name, data });
 }
 export function hideModal() {
 	activeModal.set({});
@@ -168,43 +168,43 @@ export function loadRoute(path, isInitial) {
 	if (!path || path == '/' || path.includes('/home')) {
 		component.set(Home);
 		currentPage.set('home');
-		document.title = `Free Decentralized Perpetual Exchange | Alpha-X`;
+		document.title = `Decentralized Perpetual Leverage Exchange | Alpha X`;
 	} else if (path.includes('/trade')) {
 		component.set(Trade);
 		currentPage.set('trade');
-		document.title = `Trade | Alpha-X`;
+		document.title = `Trade | Alpha X`;
 	} else if (path.includes('/pool')) {
 		component.set(Pool);
 		currentPage.set('pool');
-		document.title = `Pool | Alpha-X`;
+		document.title = `Pool | Alpha X`;
 	} else if (path.includes('/buy')) {
 		component.set(Buy);
 		currentPage.set('buy');
-		document.title = `Buy Alpha-X| Alpha-X`;
+		document.title = `Buy Alpha X| Alpha X`;
 	}
 	hydrateData();
 }
 export function navigateTo(path) {
-    window.history.pushState(null, null, path);
-    loadRoute(path, false);
+	window.history.pushState(null, null, path);
+	loadRoute(path, false);
 }
 
 export function toBytes32(string) {
-  return ethers.utils.formatBytes32String(string);
+	return ethers.utils.formatBytes32String(string);
 }
 export function fromBytes32(string) {
-  return ethers.utils.parseBytes32String(string);
+	return ethers.utils.parseBytes32String(string);
 }
 
 // Data formatters
 export function formatUnits(number, units) {
-  return ethers.utils.formatUnits(number || 0, units || 8);
+	return ethers.utils.formatUnits(number || 0, units || 8);
 }
 export function parseUnits(number, units) {
-  if (typeof(number) == 'number') {
-  	number = "" + number;
-  }
-  return ethers.utils.parseUnits(number, units || 8);
+	if (typeof (number) == 'number') {
+		number = "" + number;
+	}
+	return ethers.utils.parseUnits(number, units || 8);
 }
 export function formatProduct(id, product) {
 	return {
@@ -253,7 +253,7 @@ export function formatPositions(positions, info) {
 	let i = 0;
 	if (!info) info = {};
 	for (const p of positions) {
-		if (!p.size || !p.size*1 || p.size.toString()*1 == 0) {
+		if (!p.size || !p.size * 1 || p.size.toString() * 1 == 0) {
 			i++;
 			continue;
 		}
@@ -344,7 +344,6 @@ export async function getUPL(position, latestPrice) {
 
 	let priceImpact = getPriceImpact(position.size, position.productId, position.currencyLabel);
 	if (latestPrice) {
-		const productInfo = await getProduct(position.productId);
 		if (position.isLong) {
 			latestPrice = latestPrice * (1 + priceImpact / 100);
 			upl = position.size * (latestPrice * 1 - position.price * 1) / position.price;
@@ -360,22 +359,22 @@ export async function getUPL(position, latestPrice) {
 }
 
 export async function getInterest(position) {
-		// Add interest
-		let interest;
-		let now = parseInt(Date.now() / 1000);
-		const productInfo = await getProduct(position.productId);
-		if (!position.price || !position.timestamp || now < position.timestamp * 1 + 900) {
-			interest = 0;
-		} else {
-			interest = position.size * ((productInfo.interest * 1 || 0) / 100) * (now - position.timestamp * 1) / (360 * 24 * 3600);
-		}
-		if (interest < 0) interest = 0;
-		return -1 * interest;
+	// Add interest
+	let interest;
+	let now = parseInt(Date.now() / 1000);
+	const productInfo = await getProduct(position.productId);
+	if (!position.price || !position.timestamp || now < position.timestamp * 1 + 900) {
+		interest = 0;
+	} else {
+		interest = position.size * ((productInfo.interest * 1 || 0) / 100) * (now - position.timestamp * 1) / (360 * 24 * 3600);
+	}
+	if (interest < 0) interest = 0;
+	return -1 * interest;
 }
 
 export function getPriceImpact(size, _productId, _currencyLabel) {
 	if (!size || !_productId || !_currencyLabel) return 0;
-	
+
 	const productParams = PRODUCTS[_productId];
 	const {
 		baseSpread,
@@ -383,8 +382,6 @@ export function getPriceImpact(size, _productId, _currencyLabel) {
 		slippageExponent,
 		maxLiquidity
 	} = productParams;
-
-	// console.log('l', $size, productParams, $currencyLabel);
 
 	return -1 * (baseSpread * 100 + maxSlippage * (1 - Math.exp(-1 * Math.pow(size / maxLiquidity[_currencyLabel], slippageExponent))));
 }
@@ -395,16 +392,16 @@ export function hidePopoversOnClick() {
 	window.addEventListener('click', (ev) => {
 
 		if (ev.altKey || ev.ctrlKey || ev.metaKey || ev.shiftKey || ev.defaultPrevented) {
-		  return true;
+			return true;
 		}
-      
+
 		if (ev.target && ev.target.getAttribute('data-intercept')) return true;
 
 		let interceptor = null;
 		for (let n = ev.target; n.parentNode; n = n.parentNode) {
 			if (n.getAttribute('data-intercept')) {
-			  interceptor = true;
-			  break;
+				interceptor = true;
+				break;
 			}
 		}
 
@@ -415,7 +412,7 @@ export function hidePopoversOnClick() {
 	});
 
 	window.addEventListener('keydown', (ev) => {
-		if (ev.key == 'Escape') {
+		if (ev.key == 'Esapxe') {
 			hideModal();
 			hideToast();
 		}
@@ -429,7 +426,7 @@ export function catchLinks(cb) {
 		if (ev.altKey || ev.ctrlKey || ev.metaKey || ev.shiftKey || ev.defaultPrevented) {
 			return true;
 		}
-		
+
 		let anchor = null;
 		for (let n = ev.target; n.parentNode; n = n.parentNode) {
 			if (n.nodeName === 'A') {
@@ -439,13 +436,13 @@ export function catchLinks(cb) {
 		}
 
 		if (!anchor) return true;
-		
+
 		let href = anchor.getAttribute('href');
-		
+
 		if (!href || href && href.includes('http')) return true;
-		
+
 		ev.preventDefault();
-		
+
 		cb(href);
 
 		return false;

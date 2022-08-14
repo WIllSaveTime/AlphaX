@@ -69,6 +69,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		color: var(--btn-color);
 	}
 
 	.range-container {

@@ -30,6 +30,9 @@
 		background-color: var(--jet);
 		cursor: default !important;
 	}
+	.row:not(.selected) .product-wrap span{
+		color: var(--btn-color)
+	}
 	.row:last-child {
 		border-bottom: none;
 	}

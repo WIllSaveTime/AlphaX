@@ -83,10 +83,10 @@
 		font-weight: 500;
 	}
 	.account-nav a:hover {
-		color: #fff;
+		color: rgb(13, 6, 6);
 	}
 	.account-nav a.active {
-		color: var(--green);
+		color: var(--btn-color);
 		font-weight: 600;
 	}
 

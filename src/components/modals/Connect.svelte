@@ -43,7 +43,7 @@
 	</div>
 
 	<div class='row' on:click={() => {connectWalletConnect()}} data-intercept="true">
-		<img src='https://raw.githubusercontent.com/WalletConnect/walletconnect-assets/master/svg/circle/walletconnect-circle-blue.svg'>
+		<img src='https://github.com/WalletConnect/walletconnect-assets/blob/master/Icon/Blue%20(Default)/Icon.svg'>
 		<div>WalletConnect</div>
 	</div>
 
