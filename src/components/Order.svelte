@@ -41,6 +41,10 @@
 	}
 
 	async function _submitNewPosition(isLong) {
+		if(Math.abs(priceImpact * 1) > 0.1) {
+			showToast('Cannot open this position because of the size of the position')
+			return
+		}
 		
 		if (!$size) return focusAmount();
 		if (!$address) return showToast('Connect your wallet to trade.');
@@ -305,14 +309,14 @@
 				<div class='detail-label'>Fee</div>
 				<div class='detail-value'>0%</div>
 			</div> -->
-			{#if $address}
-	      		{#if Math.abs(priceImpact * 1) > 0.1}
+			<!-- {#if $address}
+				{#if Math.abs(priceImpact * 1) > 0.1}
 				<div class='row'>
 					<div class='detail-label'>Price Impact</div>
 					<div class='detail-value'>{formatToDisplay(priceImpact)}%</div>
 				</div>
 				{/if}
-			{/if}
+			{/if} -->
 			<div class='sep'></div>
 		{/if}
 		<div class='row'>

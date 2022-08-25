@@ -17,6 +17,11 @@
 
 	let isSubmitting = false;
 	async function _submitNewPosition() {
+		// if(Math.abs(priceImpact * 1) > 0.1) {
+		// 	showToast('cannot open this position because of price impact')
+			// hideModal();
+		// 	return
+		// }
 
 		isSubmitting = true;
 		const result = await approveCurrency(data.currencyLabel, 'trading', data.size);
@@ -142,12 +147,12 @@
 			}
 		];
 
-		if (Math.abs(priceImpact * 1) > 0.1) {
-			rows.push({
-				label: 'Price Impact',
-				value: `${formatToDisplay(priceImpact)}%`
-			});
-		}
+		// if (Math.abs(priceImpact * 1) > 0.1) {
+		// 	rows.push({
+		// 		label: 'Price Impact',
+		// 		value: `${formatToDisplay(priceImpact)}%`
+		// 	});
+		// }
 
 	}
 

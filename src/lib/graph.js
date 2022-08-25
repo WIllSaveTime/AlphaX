@@ -8,8 +8,8 @@ import { getOrders, getPositions } from './methods'
 import { formatUnits, formatTrades, formatOrders, formatPositions, setActiveProducts, getChainData } from './utils'
 import { history, orders, positions, address, poolStats, totalPositionETHMargin, totalPositionUSDCMargin } from './stores'
 
-// const graph_url = 'https://api.thegraph.com/subgraphs/name/0xapx/apx3';
 const graph_url = 'https://api.thegraph.com/subgraphs/name/cooker0910/prototype';
+// const graph_url = 'https://api.thegraph.com/subgraphs/name/cooker0910/alpha';
 
 export async function getVolume() {
 

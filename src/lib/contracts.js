@@ -82,7 +82,6 @@ export async function getContract(contractName, withSigner, _currencyLabel) {
 		abiName = 'rewards';
 	} else if (contractName.toLowerCase().includes('apxrewards')) {
 		address = await router.getApxRewards(currency);
-		// console.log('apx reward address', address)
 		// if (_currencyLabel == 'weth') {
 		// 	address = '0x6fCC7768CdcE48aa4e94d839E00f133de845B9FE';
 		// } else if (_currencyLabel == 'usdc') {

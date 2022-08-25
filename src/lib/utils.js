@@ -345,15 +345,15 @@ export async function getUPL(position, latestPrice) {
 	let priceImpact = getPriceImpact(position.size, position.productId, position.currencyLabel);
 	if (latestPrice) {
 		if (position.isLong) {
-			latestPrice = latestPrice * (1 + priceImpact / 100);
-			upl = position.size * (latestPrice * 1 - position.price * 1) / position.price;
+			// latestPrice = latestPrice * (1 + priceImpact / 100);
+			upl = position.leverage * (latestPrice * 1 - position.price * 1) / position.price;
 		} else {
-			latestPrice = latestPrice * (1 - priceImpact / 100);
-			upl = position.size * (position.price * 1 - latestPrice * 1) / position.price;
+			// latestPrice = latestPrice * (1 - priceImpact / 100);
+			upl = position.leverage * (position.price * 1 - latestPrice * 1) / position.price;
 		}
 		// Add interest
-		let interest = await getInterest(position);
-		upl -= interest;
+		// let interest = await getInterest(position);
+		// upl -= interest;
 	}
 	return upl;
 }

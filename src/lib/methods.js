@@ -1,5 +1,6 @@
 // Contract interaction
 import { get } from 'svelte/store'
+import { ethers } from 'ethers'
 
 import { monitorTx } from './monitor'
 
@@ -12,22 +13,22 @@ import * as Stores from './stores'
 let productCache = {};
 
 export async function getProduct(productId) {
-	
+
 	if (productCache[productId]) {
 		return productCache[productId];
 	}
-	
+
 	const contract = await getContract('trading');
 	if (!contract) return {};
-	
+
 	productCache[productId] = formatProduct(productId, await contract.getProduct(toBytes32(productId)));
-	
+
 	return productCache[productId];
 
 }
 
 export async function selectProduct(productId) {
-		
+
 	// console.log('selectProduct', productId);
 
 	if (!productId) productId = get(Stores.productId);
@@ -39,7 +40,7 @@ export async function selectProduct(productId) {
 	// console.log('product', product);
 
 	if (!product.symbol) {
-		product = formatProduct('ETH-USD', {symbol: 'ETH-USD', productId: 'ETH-USD', maxLeverage: 50 * 10**8, fee: 0});
+		product = formatProduct('ETH-USD', { symbol: 'ETH-USD', productId: 'ETH-USD', maxLeverage: 50 * 10 ** 8, fee: 0 });
 	}
 
 	// console.log('product2', product);
@@ -67,7 +68,7 @@ export async function selectProduct(productId) {
 }
 
 export async function selectCurrency(currencyLabel) {
-	
+
 	if (!currencyLabel) currencyLabel = get(Stores.currencyLabel);
 
 	const currencies = getChainData('currencies');
@@ -84,7 +85,7 @@ export async function selectCurrency(currencyLabel) {
 }
 
 export async function getAllowance(currencyLabel, spenderName) {
-	
+
 	if (!currencyLabel) currencyLabel = get(Stores.currencyLabel);
 
 	// console.log('currencyLabel', currencyLabel);
@@ -120,19 +121,19 @@ export async function getAllowance(currencyLabel, spenderName) {
 }
 
 export async function getOrders(keys) {
-	
+
 	const contract = await getContract('trading');
 	if (!contract) return {};
-	
+
 	return await contract.getOrders(keys);
 
 }
 
 export async function getPositions(keys) {
-	
+
 	const contract = await getContract('trading');
 	if (!contract) return {};
-	
+
 	return await contract.getPositions(keys);
 
 }
@@ -140,7 +141,7 @@ export async function getPositions(keys) {
 // ERC20
 
 export async function approveCurrency(currencyLabel, spenderName, amount) {
-	
+
 	const contract = await getContract(currencyLabel, true);
 	if (!contract) return;
 
@@ -149,20 +150,20 @@ export async function approveCurrency(currencyLabel, spenderName, amount) {
 
 	const spenderAddress = spenderContract.address;
 	let approveAmount;
-	if(currencyLabel == 'usdc') {
+	if (currencyLabel == 'usdc') {
 		approveAmount = parseUnits(amount, 6)
 	} else {
 		approveAmount = parseUnits(amount, 18)
 	}
 	try {
 		const tx = await contract.approve(spenderAddress, approveAmount);
-		monitorTx(tx.hash, 'approve', {currencyLabel, spenderName});
+		monitorTx(tx.hash, 'approve', { currencyLabel, spenderName });
 		let result = await tx.wait();
-		if(result) {
+		if (result.transactionHash) {
 			return 'approved';
 		}
-	} catch(e) {
-		console.log('here', e.message)
+	} catch (e) {
+		// console.log('here', e.message)
 		showToast(e);
 		return e;
 	}
@@ -170,9 +171,9 @@ export async function approveCurrency(currencyLabel, spenderName, amount) {
 }
 
 export async function getBalanceOf(currencyLabel, address) {
-	
+
 	if (!currencyLabel) currencyLabel = get(Stores.currencyLabel);
-	
+
 	if (!address) {
 		address = get(Stores.address);
 		if (!address) return 0;
@@ -183,12 +184,12 @@ export async function getBalanceOf(currencyLabel, address) {
 	// 	// get ETH balance
 	// 	balance = await get(Stores.provider).getBalance(address);
 	// } else {
-		const contract = await getContract(currencyLabel);
-		if (!contract) return 0;
-		decimals = await contract.decimals();
-		balance = await contract.balanceOf(address);
+	const contract = await getContract(currencyLabel);
+	if (!contract) return 0;
+	decimals = await contract.decimals();
+	balance = await contract.balanceOf(address);
 	// }
-	
+
 	return formatUnits(balance, decimals || 18);
 
 }
@@ -224,7 +225,7 @@ export async function getapxPoolShare(currencyLabel) {
 }
 
 export async function getUserPoolBalance(currencyLabel, isOld) {
-	
+
 	const address = get(Stores.address);
 	if (!address) return 0;
 
@@ -258,7 +259,7 @@ export async function getPoolInfo(currencyLabel, reloading) {
 			return x;
 		});
 	}
-	
+
 	const contract = await getContract('pool', false, currencyLabel);
 
 	if (!contract) return;
@@ -268,9 +269,9 @@ export async function getPoolInfo(currencyLabel, reloading) {
 		const userBalance = await getUserPoolBalance(currencyLabel);
 		const claimableReward = await getClaimableReward(currencyLabel);
 		const poolShare = await getPoolShare(currencyLabel);
-		
+
 		const openInterest = formatUnits(await contract.openInterest(), 18);
-		
+
 		const withdrawFee = dataCache[currencyLabel].withdrawFee || formatUnits(await contract.withdrawFee(), 2);
 		dataCache[currencyLabel].withdrawFee = withdrawFee;
 
@@ -290,8 +291,8 @@ export async function getPoolInfo(currencyLabel, reloading) {
 			utilizationMultiplier
 		};
 
-	} catch(e) {
-		console.log('error', e.message);
+	} catch (e) {
+		// console.log('error', e.message);
 	}
 
 	Stores.pools.update((x) => {
@@ -330,9 +331,9 @@ export async function getOldPoolInfo(currencyLabel) {
 		const userBalance = await getUserPoolBalance(currencyLabel, true);
 		const claimableReward = await getClaimableReward(currencyLabel, false, true);
 		const poolShare = await getPoolShare(currencyLabel);
-		
+
 		const openInterest = formatUnits(await contract.openInterest(), 18);
-		
+
 		const withdrawFee = dataCache[currencyLabel].withdrawFee || formatUnits(await contract.withdrawFee(), 2);
 		dataCache[currencyLabel].withdrawFee = withdrawFee;
 
@@ -352,8 +353,8 @@ export async function getOldPoolInfo(currencyLabel) {
 			utilizationMultiplier
 		};
 
-	} catch(e) {
-		console.log('errror', e.message)
+	} catch (e) {
+		// console.log('errror', e.message)
 	}
 
 	Stores.oldPools.update((x) => {
@@ -363,24 +364,18 @@ export async function getOldPoolInfo(currencyLabel) {
 
 }
 
-export async function deposit(currencyLabel, amount) {
-	
+export async function deposit(currencyLabel = null, amount) {
+
 	const contract = await getContract('pool', true, currencyLabel);
 	if (!contract) throw 'No contract available.';
 
 	try {
-		let tx;
+		let tx = await contract.deposit(parseUnits(amount, 18));
 
-		// if (currencyLabel == 'weth') {
-		// 	tx = await contract.deposit(0, {value: parseUnits(amount, 18)});
-		// } else {
-			tx = await contract.deposit(parseUnits(amount, 18));
-		// }
-
-		monitorTx(tx.hash, 'pool-deposit', {currencyLabel});
+		monitorTx(tx.hash, 'pool-deposit', { currencyLabel });
 		hideModal();
-		amplitude.getInstance().logEvent('Pool Deposit', {currencyLabel, amount});
-	} catch(e) {
+		amplitude.getInstance().logEvent('Pool Deposit', { currencyLabel, amount });
+	} catch (e) {
 		console.log('deposit err', e.message)
 		showToast(e);
 		return e;
@@ -389,16 +384,16 @@ export async function deposit(currencyLabel, amount) {
 }
 
 export async function withdraw(currencyLabel, amount, isOld) {
-	
+
 	const contract = await getContract(isOld ? 'oldpool' : 'pool', true, currencyLabel);
 	if (!contract) throw 'No contract available.';
 
 	try {
 		let tx = await contract.withdraw(parseUnits(amount, 18));
-		monitorTx(tx.hash, isOld ? 'pool-withdraw-old' : 'pool-withdraw', {currencyLabel});
+		monitorTx(tx.hash, isOld ? 'pool-withdraw-old' : 'pool-withdraw', { currencyLabel });
 		hideModal();
-		amplitude.getInstance().logEvent('Pool Withdraw', {currencyLabel, amount, isOld});
-	} catch(e) {
+		amplitude.getInstance().logEvent('Pool Withdraw', { currencyLabel, amount, isOld });
+	} catch (e) {
 		// console.log('error', e.message)
 		showToast(e);
 		return e;
@@ -407,17 +402,17 @@ export async function withdraw(currencyLabel, amount, isOld) {
 }
 
 export async function collectPoolReward(currencyLabel, isOld) {
-	
+
 	const contract = await getContract(isOld ? 'oldpoolrewards' : 'poolrewards', true, currencyLabel);
 	if (!contract) throw 'No contract available.';
-	console.log('contract', contract)
+	// console.log('contract', contract)
 
 	try {
 		let tx = await contract.collectReward();
-		monitorTx(tx.hash, isOld ? 'pool-collect-old' : 'pool-collect', {currencyLabel});
-		amplitude.getInstance().logEvent('Pool Collect', {currencyLabel, isOld});
-	} catch(e) {
-		console.log('error', e.message)
+		monitorTx(tx.hash, isOld ? 'pool-collect-old' : 'pool-collect', { currencyLabel });
+		amplitude.getInstance().logEvent('Pool Collect', { currencyLabel, isOld });
+	} catch (e) {
+		// console.log('error', e.message)
 		showToast(e);
 		return e;
 	}
@@ -442,17 +437,16 @@ export async function getapxSupply() {
 
 	const contract = await getContract('apxPool');
 	if (!contract) return;
-	
+
 	return formatUnits(await contract.totalSupply(), 18);
 
 }
 
 export async function getapxPoolInfo() {
-	
+
 	let info = {
 		supply: 0,
 		userBalance: 0,
-		claimableRewards: {},
 		poolShares: {}
 	};
 
@@ -463,31 +457,32 @@ export async function getapxPoolInfo() {
 	}
 
 	const contract = await getContract('router');
-	
-	let claimableRewards = {};
+
 	let poolShares = {};
 	let rewardBalance = {};
+	let rewardAmount = {};
 	for (const currencyLabel in currencies) {
-		claimableRewards[currencyLabel] = await getClaimableReward(currencyLabel, true);
 		poolShares[currencyLabel] = await getapxPoolShare(currencyLabel);
 		const apxRewardContract = await contract.getApxRewards(currencies[currencyLabel])
 		rewardBalance[currencyLabel] = await getBalanceOf(currencyLabel, apxRewardContract)
+		rewardAmount[currencyLabel] = await getWithdrawAmount(currencyLabel)
+		if (currencyLabel == 'usdc') rewardAmount[currencyLabel] = rewardAmount[currencyLabel] * 10 ** 12;
 	}
 
 	info = {
 		supply: await getapxSupply(),
 		userBalance: await getUserapxBalance(),
-		claimableRewards,
 		poolShares,
-		rewardBalance
+		rewardBalance,
+		rewardAmount
 	};
-	
+
 	Stores.apxPool.set(info);
 
 }
 
 export async function depositapx(amount) {
-	
+
 	const contract = await getContract('apxPool', true);
 	// console.log('contract', contract)
 	if (!contract) throw 'No contract available.';
@@ -496,9 +491,9 @@ export async function depositapx(amount) {
 		let tx = await contract.deposit(parseUnits(amount, 18));
 		monitorTx(tx.hash, 'apx-deposit');
 		hideModal();
-		amplitude.getInstance().logEvent('Pool Deposit Alpha X', {amount});
-	} catch(e) {
-		console.log('deposit apx error', e.message)
+		amplitude.getInstance().logEvent('Pool Deposit Alpha X', { amount });
+	} catch (e) {
+		// console.log('deposit apx error', e.message)
 		showToast(e);
 		return e;
 	}
@@ -506,7 +501,7 @@ export async function depositapx(amount) {
 }
 
 export async function withdrawapx(amount) {
-	
+
 	const contract = await getContract('apxPool', true);
 	if (!contract) throw 'No contract available.';
 
@@ -514,34 +509,34 @@ export async function withdrawapx(amount) {
 		let tx = await contract.withdraw(parseUnits(amount, 18));
 		monitorTx(tx.hash, 'apx-withdraw');
 		hideModal();
-		amplitude.getInstance().logEvent('Pool Withdraw Alpha X', {amount});
-	} catch(e) {
-		console.log('error', e.message)
+		amplitude.getInstance().logEvent('Pool Withdraw Alpha X', { amount });
+	} catch (e) {
+		// console.log('error', e.message)
 		showToast(e);
 		return e;
 	}
 
 }
 
-export async function collectapxReward(currencyLabel, amount) {
-	
+export async function collectapxReward(currencyLabel) {
+
 	const contract = await getContract('apxrewards', true, currencyLabel);
 	if (!contract) throw 'No contract available.';
 
 	try {
-		let tx = await contract.collectRewardApx(parseUnits(amount, 18));
-		monitorTx(tx.hash, 'apx-collect', {currencyLabel});
+		let tx = await contract.collectRewardApx();
+		monitorTx(tx.hash, 'apx-collect', { currencyLabel });
 		let result = await tx.wait();
-		amplitude.getInstance().logEvent('Pool Collect Alpha X', {currencyLabel});
+		amplitude.getInstance().logEvent('Pool Collect Alpha X', { currencyLabel });
 
-		if(result) {
+		if (result) {
 			Stores.confirmApxReward.update((x => {
 				x[currencyLabel] = true;
 				return x;
 			}))
 			return 'done'
 		}
-	} catch(e) {
+	} catch (e) {
 		console.log('error', e.message)
 		showToast(e);
 		return e;
@@ -555,7 +550,7 @@ export async function getClaimableReward(currencyLabel, forapx, isOld) {
 
 	const address = get(Stores.address);
 	if (!address) return 0;
-	
+
 	let contractName = forapx ? 'apxrewards' : 'poolrewards';
 	if (forapx) {
 		contractName = 'apxrewards';
@@ -567,10 +562,18 @@ export async function getClaimableReward(currencyLabel, forapx, isOld) {
 
 	const contract = await getContract(contractName, true, currencyLabel);
 	if (!contract) return;
-	// console.log('get claim', formatUnits(await contract.getClaimableReward(), 18), contract.address)
 
 	return formatUnits(await contract.getClaimableReward(), 18);
 
+}
+
+export async function getWithdrawAmount(currencyLabel) {
+	const address = get(Stores.address);
+	if (!address) return;
+	const contract = await getContract('apxrewards', true, currencyLabel)
+	if (!contract) return;
+	let temp = await contract.getWithdrawAmount(address)
+	return formatUnits(await contract.getWithdrawAmount(address), 18);
 }
 
 // Positions
@@ -614,13 +617,13 @@ export async function submitOrder(isLong) {
 			parseUnits(margin),
 			parseUnits(size)
 		);
-			
+
 		monitorTx(tx.hash, 'submit-new-position');
 
-		amplitude.getInstance().logEvent('Order Submit', {productId, currencyLabel, margin, size, leverage, isLong, marginEth});
+		amplitude.getInstance().logEvent('Order Submit', { productId, currencyLabel, margin, size, leverage, isLong, marginEth });
 
-	} catch(e) {
-		console.log('submitOrder error', e.message)
+	} catch (e) {
+		// console.log('submitOrder error', e.message)
 		showToast(e);
 		return e;
 	}
@@ -629,7 +632,6 @@ export async function submitOrder(isLong) {
 
 export async function submitCloseOrder(productId, currencyLabel, isLong, size, funding) {
 
-	//console.log('sco', positionId, productId, size, currencyLabel);
 
 	const contract = await getContract('trading', true);
 	if (!contract) throw 'No contract available.';
@@ -638,6 +640,7 @@ export async function submitCloseOrder(productId, currencyLabel, isLong, size, f
 	if (!currencies) return;
 
 	const currency = currencies[currencyLabel];
+	if (funding < 0) funding = -1 * funding
 
 	try {
 		let tx = await contract.submitCloseOrder(
@@ -645,16 +648,16 @@ export async function submitCloseOrder(productId, currencyLabel, isLong, size, f
 			currency,
 			isLong,
 			parseUnits(size),
-			Number(funding)
+			parseUnits(funding.toFixed(8))
 		);
 
 		monitorTx(tx.hash, 'submit-close-order');
 		hideModal();
 
-		amplitude.getInstance().logEvent('Order Close', {productId, currencyLabel, size, isLong});
-		
-	} catch(e) {
-		console.log('error', e.message)
+		amplitude.getInstance().logEvent('Order Close', { productId, currencyLabel, size, isLong });
+
+	} catch (e) {
+		console.log('error', e)
 		showToast(e);
 		return e;
 	}
@@ -677,10 +680,10 @@ export async function cancelOrder(productId, currencyLabel, isLong) {
 		monitorTx(tx.hash, 'cancel-order');
 		hideModal();
 
-		amplitude.getInstance().logEvent('Order Cancel', {productId, currencyLabel, isLong});
+		amplitude.getInstance().logEvent('Order Cancel', { productId, currencyLabel, isLong });
 
-	} catch(e) {
-		console.log('error', e.message)
+	} catch (e) {
+		// console.log('error', e.message)
 		showToast(e);
 		return e;
 

@@ -16,7 +16,6 @@
 
 	onMount(async () => {
 		const lp = await calculateLiquidationPrice(data);
-		console.log('liquidation', lp)
 		liquidationPrice = lp && lp.toFixed(6);
 	});
 
@@ -71,7 +70,7 @@
 		if (data.price * 1 > 0) {
 			rows.push({
 				label: 'Unrealized P/L',
-				value: `${formatPnl(upl)} ${formatCurrency(data.currencyLabel)} (${formatPnl(100*upl/data.margin, true)}%)`,
+				value: `${formatPnl(upl * data.margin)} ${formatCurrency(data.currencyLabel)} (${formatPnl(100*upl, true)}%)`,
 				isPnl: true,
 				rawValue: upl * 1
 			},

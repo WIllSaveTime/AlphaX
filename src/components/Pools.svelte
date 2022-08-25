@@ -11,6 +11,8 @@
 		prices,
 		address,
 		confirmApxReward,
+		apxClaimStatus,
+		currencyLabel
 	} from "../lib/stores";
 
 	import {
@@ -86,6 +88,7 @@
 		// let apy = timeScaler * 100 * (_poolStats[_currencyLabel].cumulativeFees * poolInfo.poolShare / 100 - 1 * _poolStats[_currencyLabel].cumulativePnl) / poolInfo.tvl;
 		let apy = (timeScaler * 100) / poolInfo.tvl;
 		if (apy < 10) apy = 10; // threshold APY
+		if(apy == Infinity) return "0%"
 		return formatToDisplay(apy) + "%";
 		//return "100%+"; // until enough trades come in to display actual stats from previous versions
 	}
@@ -328,40 +331,49 @@
 				</div>
 			</div>
 
-			{#each Object.entries($apxPool.rewardBalance || {}) as [_currencyLabel, reward]}
-				<div class="row">
-					<div class="label">
-						<div class="top-label">
-							My {formatCurrency(_currencyLabel)} Rewards <!-- (<strong>{formatToDisplay($apxPool.poolShares[_currencyLabel])}%</strong> of fees) -->
-						</div>
-						<a
-							class:disabled={reward == 0 || $confirmApxReward[_currencyLabel]}
-							on:click={() => {
-								collectapxReward(
-									_currencyLabel,
-									reward * ($apxPool.userBalance / $apxPool.supply)
-								);
-							}}>Collect</a
-						>
+			{#each Object.entries($apxPool.rewardAmount || {}) as [_currencyLabel, reward]}
+			<div class="row">
+				<div class="label">
+					<div class="top-label">
+						My {formatCurrency(_currencyLabel)} Rewards <!-- (<strong>{formatToDisplay($apxPool.poolShares[_currencyLabel])}%</strong> of fees) -->
 					</div>
-					<div class="value">
-						{#if $confirmApxReward[_currencyLabel]}
-						0
-						{:else}
-						{formatToDisplay(reward * ($apxPool.userBalance / $apxPool.supply))}
-						{/if}
-						{formatCurrency(_currencyLabel)}
-						{#if _currencyLabel == "weth" && $prices["ETH-USD"]}
-							<span class="grayed"
-								>(${formatToDisplay(
-									$prices["ETH-USD"] *
-										reward *
-										($apxPool.userBalance / $apxPool.supply) || 0
-								)})</span
-							>
-						{/if}
-					</div>
+					{#if _currencyLabel != "weth"}
+					<a
+						class:disabled={reward == 0 || reward < 0.0001}
+						on:click={() => {
+							collectapxReward(
+								_currencyLabel									
+							);
+						}}>Collect
+					</a>
+					{:else}
+					<a
+						class:disabled={reward == 0}
+						on:click={() => {
+							collectapxReward(
+								_currencyLabel									
+							);
+						}}>Collect
+					</a>
+					{/if}
 				</div>
+				<div class="value">
+					{#if reward == 0}
+					0
+					{:else}
+					{formatToDisplay(reward)}
+					{/if}
+					{formatCurrency(_currencyLabel)}
+					{#if _currencyLabel == "weth" && $prices["ETH-USD"]}
+						<span class="grayed"
+							>(${formatToDisplay(
+								$prices["ETH-USD"] *
+									reward || 0
+							)})</span
+						>
+					{/if}
+				</div>
+			</div>
 			{/each}
 		</div>
 	</div>

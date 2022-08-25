@@ -1,5 +1,5 @@
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000';
-export const WETH_ADDR = '0x77eB6cD3debD391cc78e6c4a3a7495796bc435D5'
+export const WETH_ADDR = '0xc75EA03EB9EAf1FAe5f9c52383e9caecF5fCf0cb'
 
 export const HISTORY_COUNT = 10;
 
@@ -53,7 +53,8 @@ export const ABIS = {
 		"function getClaimableReward() view returns(uint256)",
 
 		"function collectReward()",
-		"function collectRewardApx(uint256 amount)"
+		"function getWithdrawAmount(address account) view returns(uint256)",
+		"function collectRewardApx()"
 	],
 	treasury: [
 		
@@ -107,18 +108,18 @@ export const CHAINDATA = {
 	},
 	80001: {
 		label: 'Mumbai',
-		router: '0x18e47D360e7F5258b51F10E2786143d50F1D9110',
+		router: '0xd85e40E5892849E908d80B49b29594e99e1A2454',
 		explorer: 'https://mumbai.polygonscan.com/',
 		rpc: 'https://polygon-mumbai.g.alchemy.com/v2/VFCowlE8aG7cSC17T52wbQAL387ycrzc', // for walletconnect
 		currencies: {
-			weth: '0xec8225B3cae93cad610380B6C3d522be98090C20',
-			usdc: '0x77Ca06E65915DC8e8A00cFE3D39E4c48E0060d27'
+			weth: '0xc75EA03EB9EAf1FAe5f9c52383e9caecF5fCf0cb',
+			usdc: '0x8733c317F2b06DB1dc6C96E9076CFFD268f6757d'
 		},
 		poolInception: {
 			weth: 1658797825000,
 			usdc: 1658797825000,
 			apx: 1658797825000
 		},
-		apx: '0x303043E85AfA2af16004A9f62496c28f07CE76B1'
+		apx: '0xEEae17A33508ac2F35313448cD1ad51e4133F5da'
 	}
 }

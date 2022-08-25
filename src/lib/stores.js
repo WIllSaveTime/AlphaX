@@ -69,7 +69,11 @@ export const totalPositionETHMargin = writable();
 export const totalPositionUSDCMargin = writable();
 export const volume_ETH = writable();
 export const volume_USDC = writable();
-export const confirmApxReward = writable({});
+export const confirmApxReward = writable({
+	'weth': false,
+	'usdc': false
+});
+export const apxClaimStatus = writable({});
 
 export const enhancedPositions = derived([orders, positions], ([$orders, $positions]) => {
 	// console.log('orders', $orders);

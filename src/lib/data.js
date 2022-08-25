@@ -1,6 +1,6 @@
 import { get } from 'svelte/store'
 
-import { selectProduct, selectCurrency, getPoolInfo, getapxPoolInfo } from './methods'
+import { selectProduct, selectCurrency, getPoolInfo, getapxPoolInfo, getWithdrawAmount } from './methods'
 import { getUserOrders, getUserPositions, getPoolStats } from './graph'
  
 import { currentPage } from './stores'

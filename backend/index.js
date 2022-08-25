@@ -5,15 +5,12 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const fetch = require('node-fetch');
 require('dotenv').config()
+
 let _provider = new ethers.providers.JsonRpcProvider(process.env.MUMBAI_RPC);
-
-var web3 = new Web3(process.env.MUMBAI_RPC);
+var web3__ = new Web3(process.env.MUMBAI_RPC);
 var mainnetWeb3 = new Web3(process.env.MAINNET_RPC)
-
 const darkOracleSigner = new ethers.Wallet(process.env.DARKORACLE);
 const account = new ethers.Wallet(process.env.OWNER, _provider);
-const darkOracle = darkOracleSigner.connect(_provider);
-const account2 = new ethers.Wallet(process.env.ACCOUNT2, _provider)
 
 const { Block } = require('./db/Block.model')
 const TradingAbi = require('./abis/trading.json')
@@ -21,12 +18,15 @@ const OracleAbi = require('./abis/oracle.json')
 const ETH_USD = require('./abis/ETH-USD.json')
 const BTC_USD = require('./abis/BTC-USD.json')
 
-const OracleContract = new ethers.Contract(process.env.ORACLE_CONTRACT, OracleAbi, darkOracle)
-const TradingContract = new ethers.Contract(process.env.TRADING_CONTRACT, TradingAbi, account);
 const ETH_USDContract = new mainnetWeb3.eth.Contract(ETH_USD, process.env.ETH_USD_CONTRACT)
 const BTC_USDContract = new mainnetWeb3.eth.Contract(BTC_USD, process.env.BTC_USD_CONTRACT)
-const TradingcontractWeb3 = new web3.eth.Contract(TradingAbi, process.env.TRADING_CONTRACT)
-const OracleContract1 = new web3.eth.Contract(OracleAbi, process.env.ORACLE_CONTRACT)
+
+const rpcs = [
+  'https://polygon-mumbai.g.alchemy.com/v2/g-7R1YtzCCSO3rIyc9pKFmRs48rt2EqX',
+  'https://polygon-mumbai.g.alchemy.com/v2/zc4CzqwB0LjNvHXdAYwGFQrDqfE1uNY-',
+  'https://polygon-mumbai.g.alchemy.com/v2/VFCowlE8aG7cSC17T52wbQAL387ycrzc',
+  'https://polygon-mumbai.g.alchemy.com/v2/i3ONwE5lyqGdDggxSuRPb102ek8hFhHU'
+]
 
 const app = express();
 app.use(cors());
@@ -45,46 +45,12 @@ const gas = {
   gasLimit: 20000000
 }
 
-const parseUnits = (number, units) => {
-  if (typeof (number) == 'number') {
-    number = "" + number;
-  }
-  return ethers.utils.parseUnits(number, units || 8);
-}
-
-const toBytes32 = (string) => {
-  return ethers.utils.formatBytes32String(string);
-}
-
-const submitOrder = async () => {
-  let res = await TradingContract.submitOrder(
-    toBytes32('ETH-USD'),
-    '0x4F18aCA9C35bA6169f8e43179Ab56c0710216eA0',
-    false,
-    parseUnits(2.02000000),
-    parseUnits(101),
-    { value: parseUnits(0.000000000000, 18) }
-  )
-  console.log('res', res)
-}
-
-const cancelOrder = async () => {
-  let res = await TradingContract.cancelOrder(
-    toBytes32('ETH-USD'),
-    '0x976f4671d3Bf00eA9FfBAB55174411E9568413dA',
-    true
-  )
-  console.log('res', res)
-  let result = await res.wait();
-  console.log('result', result)
-}
-
 app.listen(process.env.PORT || 5000, async function () {
   
-
-  const liquidatePositions = async (users, productIds, currencies, isLongs, prices, nonce) => {
+  const liquidatePositions = async (_web3, users, productIds, currencies, isLongs, prices, nonce) => {
     console.log('liquidation position')
-    let data = await OracleContract1.methods.liquidatePositions(
+    const OracleContract2 = new _web3.eth.Contract(OracleAbi, process.env.ORACLE_CONTRACT)
+    let data = await OracleContract2.methods.liquidatePositions(
       users,
       productIds,
       currencies,
@@ -101,11 +67,10 @@ app.listen(process.env.PORT || 5000, async function () {
     }
     try {
       let res = await darkOracleSigner.signTransaction(tx)
-      // console.log('res', res)
       if (res) {
         let result = await _provider.sendTransaction(res)
+        console.log('liquidation result', result.hash)
         if (result) {
-          // console.log('result', result)
           let confirmedData = await result.wait();
           if (confirmedData) {
             console.log('confirmed hash', confirmedData.transactionHash)
@@ -117,7 +82,14 @@ app.listen(process.env.PORT || 5000, async function () {
     }
   }
 
+  let j = 0;
+  // let web3_array = [];
+  // for (j = 0; j < 4; j ++) {
+  //   web3_array[j] = new Web3(rpcs[j]);
+  // }
+
   const getPositions = async() => {
+    var web3 = new Web3(rpcs[j]);
     const response = await fetch('https://api.thegraph.com/subgraphs/name/cooker0910/prototype', {
       method: 'POST',
       headers: {
@@ -150,9 +122,8 @@ app.listen(process.env.PORT || 5000, async function () {
     const json = await response.json();
   
     let _positions = json.data && json.data.positions;
-    let nonce = await web3.eth.getTransactionCount(process.env.DARKORACLE0)
     let users = []; let productIds = []; let currencies = []; let isLongs = []; let prices = [];
-    console.log('_positions', _positions)
+
     for(const p of _positions) {
       let price;
       let liquidationPrice;
@@ -184,16 +155,21 @@ app.listen(process.env.PORT || 5000, async function () {
       }
     }
     if(users.length > 0) {
-      console.table({'liquidation users': users, 'prices': prices})
-      await liquidatePositions(users, productIds, currencies, isLongs, prices, nonce)
+      console.log('liquidation users', users, prices)
+      let nonce = await web3.eth.getTransactionCount(process.env.DARKORACLE0)
+      await liquidatePositions(web3, users, productIds, currencies, isLongs, prices, nonce)
     } else {
-      console.table({'users': users})
+      console.table({'users': users, "prices": prices})
     }
+
+    j++;
+    if(j == 4) j = 0;
   }
 
-  const settleOrders = async (users, productIds, currencies, isLongs, prices, fundings, nonce) => {
+  const settleOrders = async (_web3, users, productIds, currencies, isLongs, prices, fundings, nonce) => {
     console.log('settle order')
-    let data = await OracleContract1.methods.settleOrders(
+    const OracleContract = new _web3.eth.Contract(OracleAbi, process.env.ORACLE_CONTRACT)
+    let data = await OracleContract.methods.settleOrders(
       users,
       productIds,
       currencies,
@@ -211,11 +187,9 @@ app.listen(process.env.PORT || 5000, async function () {
     }
     try {
       let res = await darkOracleSigner.signTransaction(tx)
-      // console.log('res', res)
       if (res) {
         let result = await _provider.sendTransaction(res)
         if (result) {
-          // console.log('result', result)
           let confirmedData = await result.wait();
           if (confirmedData) {
             console.log('confirmed hash', confirmedData.transactionHash)
@@ -243,9 +217,12 @@ app.listen(process.env.PORT || 5000, async function () {
       console.error("GetHead Event Err: add event info", error);
     }
   }
-  setInterval(getPositions, 5 * 1000)
-  
+
+  setInterval(getPositions, 100 * 1000)
+
+  let i = 0;
   for(; ;) {
+    var web3 = new Web3(rpcs[i]);
     confirmedBlockNumber = await getLatestBlockNumber();
     let latestBlockNumber = await web3.eth.getBlockNumber();
     console.log('block number', latestBlockNumber, confirmedBlockNumber)
@@ -256,7 +233,7 @@ app.listen(process.env.PORT || 5000, async function () {
           resolve();
         }
         try {
-          TradingcontractWeb3.getPastEvents('NewOrder', {
+          new web3.eth.Contract(TradingAbi, process.env.TRADING_CONTRACT).getPastEvents('NewOrder', {
             fromBlock: confirmedBlockNumber,
             toBlock: latestBlockNumber
           }, function (error, events) { return; })
@@ -308,8 +285,7 @@ app.listen(process.env.PORT || 5000, async function () {
                   fundings.push(funding)
 
                 }
-                await settleOrders(users, productIds, currencies, isLongs, prices, fundings,nonce);
-                nonce++;
+                await settleOrders(web3, users, productIds, currencies, isLongs, prices, fundings,nonce);
               }
             })
           resolve()
@@ -325,6 +301,8 @@ app.listen(process.env.PORT || 5000, async function () {
     await new Promise((resolve) => {
       setTimeout(resolve, 40 * 1000)
     })
+    i++;
+    if(i == 4) i = 0
   }
 
 });

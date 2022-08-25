@@ -118,7 +118,6 @@ export async function switchChains() {
 			params: [{ chainId: '0x13881' }],
 		});
 	} catch (switchError) {
-		console.log('error', switchError.message)
 		// This error code indicates that the chain has not been added to MetaMask.
 		if (switchError.code === 4902) {
 			try {
@@ -137,7 +136,7 @@ export async function switchChains() {
 					}],
 				});
 			} catch (addError) {
-				console.log('error', addError.message)
+				// console.log('error', addError.message)
 				// handle "add" error
 			}
 		}
