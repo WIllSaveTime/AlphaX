@@ -22,10 +22,7 @@ const ETH_USDContract = new mainnetWeb3.eth.Contract(ETH_USD, process.env.ETH_US
 const BTC_USDContract = new mainnetWeb3.eth.Contract(BTC_USD, process.env.BTC_USD_CONTRACT)
 
 const rpcs = [
-  'https://polygon-mumbai.g.alchemy.com/v2/g-7R1YtzCCSO3rIyc9pKFmRs48rt2EqX',
-  'https://polygon-mumbai.g.alchemy.com/v2/zc4CzqwB0LjNvHXdAYwGFQrDqfE1uNY-',
-  'https://polygon-mumbai.g.alchemy.com/v2/VFCowlE8aG7cSC17T52wbQAL387ycrzc',
-  'https://polygon-mumbai.g.alchemy.com/v2/i3ONwE5lyqGdDggxSuRPb102ek8hFhHU'
+  
 ]
 
 const app = express();
